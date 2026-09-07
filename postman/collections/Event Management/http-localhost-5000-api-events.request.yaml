@@ -1,0 +1,27 @@
+$kind: http-request
+name: http://localhost:5000/api/events
+description: ""
+url: http://localhost:5000/api/events
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"title\": \"Tech Fest 2026\",\r
+
+    \  \"description\": \"Annual college tech festival with workshops and talks\",\r
+
+    \  \"venue\": \"Main Auditorium\",\r
+
+    \  \"date\": \"2026-12-15\",\r
+
+    \  \"city\": \"Bangalore\",\r
+
+    \  \"category\": \"conference\"\r
+
+    }"
+auth:
+  type: bearer
+  credentials:
+    token: "{{json_web_token_0e7h}}"
+order: 4499755434682514

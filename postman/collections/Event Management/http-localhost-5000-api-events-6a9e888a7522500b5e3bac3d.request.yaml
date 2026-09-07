@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:5000/api/events/6a9e888a7522500b5e3bac3d
+description: ""
+url: http://localhost:5000/api/events/6a9e888a7522500b5e3bac3d
+method: GET
+order: 4433445013273369

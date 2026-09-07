@@ -1,0 +1,9 @@
+$kind: http-request
+name: http://localhost:5000/api/events/search
+description: ""
+url: http://localhost:5000/api/events/search?city=Bangalore&category=conference
+method: GET
+queryParams:
+  city: Bangalore
+  category: conference
+order: 4328549768614465

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - EventX</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">EventX</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center" id="nav-right"></ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="alert-container"></div>
+
+    <div class="container mt-5 pt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="glass-panel animate-fade-in p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-dark">Welcome Back</h2>
+                        <p class="text-muted">Sign in to continue to EventX</p>
+                    </div>
+                    
+                    <form id="login-form">
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Email Address</label>
+                            <input type="email" class="form-control form-control-lg" id="email" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-5">
+                            <label class="form-label fw-bold text-muted small text-uppercase">Password</label>
+                            <input type="password" class="form-control form-control-lg" id="password" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-3 mb-3 fw-bold shadow-sm" id="login-btn">
+                            <span class="spinner-border spinner-border-sm d-none me-2" id="login-spinner"></span>
+                            Sign In
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <p class="text-muted mb-0">Don't have an account? <a href="register.html" class="text-primary fw-bold text-decoration-none">Create one</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const spinner = document.getElementById('login-spinner');
+            
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+            
+            try {
+                const data = await apiFetch('/auth/login', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+                
+                // Decode or use returned user object payload
+                const token = data.token;
+                const user = data.user || data.data || { role: 'attendee' };
+                
+                // Some backends return the role directly in data or encode it in token
+                if(data.role && !user.role) user.role = data.role;
+                
+                setAuth(token, user);
+                
+                if (user.role === 'organizer') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } catch (err) {
+                // error alert shown automatically by apiFetch
+            } finally {
+                btn.disabled = false;
+                spinner.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -17,6 +17,7 @@
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.6.0",
-    "mongoose": "^9.9.4"
+    "mongoose": "^9.9.4",
+    "qrcode": "^1.5.4"
   }
 }

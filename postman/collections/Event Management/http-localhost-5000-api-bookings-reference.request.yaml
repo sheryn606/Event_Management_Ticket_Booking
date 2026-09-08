@@ -1,0 +1,8 @@
+$kind: http-request
+name: http://localhost:5000/api/bookings/reference/:referenceCode
+description: "Get a booking by reference code"
+url: http://localhost:5000/api/bookings/reference/{{referenceCode}}
+method: GET
+headers:
+  - key: Authorization
+    value: Bearer {{orgToken}}

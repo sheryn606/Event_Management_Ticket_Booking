@@ -1,0 +1,8 @@
+$kind: http-request
+name: http://localhost:5000/api/bookings/:id
+description: "Get a booking"
+url: http://localhost:5000/api/bookings/{{bookingId}}
+method: GET
+headers:
+  - key: Authorization
+    value: Bearer {{token}}

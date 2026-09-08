@@ -8,6 +8,7 @@ const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const { eventCategoryRouter, categoryRouter } = require('./routes/categoryRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 // Connect to database
 connectDB();
@@ -28,6 +29,9 @@ app.use('/api/events/:eventId/categories', eventCategoryRouter);
 
 // Mount root categories router for PUT and DELETE
 app.use('/api/categories', categoryRouter);
+
+// Mount booking router
+app.use('/api/bookings', bookingRoutes);
 
 // Centralized Error Handler (must be after all routes)
 app.use(errorHandler);

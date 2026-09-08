@@ -1,0 +1,15 @@
+$kind: http-request
+name: http://localhost:5000/api/bookings
+description: "Create a booking"
+url: http://localhost:5000/api/bookings
+method: POST
+body:
+  type: json
+  content: "{
+    \"eventId\": \"{{eventId}}\",
+    \"ticketCategoryId\": \"{{ticketCategoryId}}\",
+    \"quantity\": 2
+  }"
+headers:
+  - key: Authorization
+    value: Bearer {{token}}

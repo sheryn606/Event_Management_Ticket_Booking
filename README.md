@@ -1,93 +1,136 @@
-# Event Management & Ticketing Platform (Sprint 1 & 2)
+# Event Management & Ticket Booking System
 
-This project contains the foundational backend modules for the Event Management & Ticketing Platform.
+A full-stack Event Management & Ticket Booking application built with Node.js, Express.js, MongoDB, and Mongoose.
 
-## Tech Stack
-- Node.js + Express.js
-- MongoDB via Mongoose
-- JSON Web Token (JWT) + bcrypt
-- express-validator
-- qrcode
-
-## Setup Instructions
-
-1. Run `npm install` to install dependencies.
-2. Copy `.env.example` to `.env` and configure `MONGO_URI` and `JWT_SECRET`.
-3. Run `node server.js` to start the server.
-
-## API Reference
-
-### Module 1: Auth
-| Method | Path | Auth Required | Description |
-|--------|------|---------------|-------------|
-| POST | `/api/auth/register` | No | Register a new user (attendee or organizer). |
-| POST | `/api/auth/login` | No | Login and get a JWT token. |
-
-### Module 2: Events
-| Method | Path | Auth Required | Description |
-|--------|------|---------------|-------------|
-| POST | `/api/events` | Yes (Organizer) | Create a new event. |
-| GET | `/api/events/search` | No | Browse/search approved events (with pagination/filters). |
-| GET | `/api/events/:id` | No | Fetch details of a single event. |
-| PUT | `/api/events/:id` | Yes (Organizer, Owner) | Update an existing event. |
-| DELETE | `/api/events/:id` | Yes (Organizer, Owner) | Delete/cancel an event. |
-
-### Module 3: Ticket Categories
-| Method | Path | Auth Required | Description |
-|--------|------|---------------|-------------|
-| POST | `/api/events/:eventId/categories` | Yes (Organizer, Owner) | Add a ticket category to an event. |
-| GET | `/api/events/:eventId/categories` | No | List all ticket categories for an event. |
-| PUT | `/api/categories/:id` | Yes (Organizer, Owner) | Update a ticket category. |
-| DELETE | `/api/categories/:id` | Yes (Organizer, Owner) | Delete a ticket category. |
+The system allows attendees to discover events, book tickets, view booking history, cancel bookings, and join waitlists. Organizers can create and manage events, manage ticket categories, perform check-ins, and view sales dashboards. Administrators can approve or reject events and access administrative functions.
 
 ---
 
-## MEMBER 2 — SPRINT 2 HANDOFF
+## Team Details
 
-### Files Added
-- `models/Booking.js`
-- `controllers/bookingController.js`
-- `routes/bookingRoutes.js`
+**Project:** Event Management & Ticket Booking System  
+**Domain:** Events & Entertainment
 
-### Files Modified
-- `server.js` (mounted `/api/bookings`)
-- `.env.example` (added `CANCELLATION_WINDOW_HOURS`)
-- `README.md` (added Sprint 2 docs)
-- `package.json` and `package-lock.json` (installed `qrcode`)
+| Name | Roll Number | Role |
+|---|---|---|
+| Sheryn Anand | 2462148 |User Registration & Authentication, Ticket Creation Module,
+Ticket Assignment Engine, Ticket Status Workflow |
+| Sherwin Richard Ranjith | 2462190 | SLA Deadline Calculation, SLA Breach Flagging, Comment/Reply
+Thread, Internal Notes Module |
+| Shomik Sahu | 2462191 |  Escalation Workflow, Category & Priority Management, Customer
+Satisfaction Rating, Agent Workload Dashboard, Manager Reports & Analytics,Database schema design, Postman testing, README, and PPT consolidation |
+| 
 
-### API Endpoints
-| Method | Endpoint | Authentication | Role | Purpose |
-|--------|----------|----------------|------|---------|
-| POST | `/api/bookings` | Yes | Any | Create a new booking |
-| GET | `/api/bookings/:id` | Yes | Attendee/Org | View specific booking |
-| GET | `/api/bookings/reference/:referenceCode` | Yes | Organizer/Admin | Find booking for check-in |
-| PUT | `/api/bookings/:id/cancel` | Yes | Attendee | Cancel own booking |
-| PUT | `/api/bookings/:id/checkin` | Yes | Organizer/Admin | Check in a booking |
+> Replace the placeholders above with the final team information before submission.
 
-### Environment Changes
-- Added `CANCELLATION_WINDOW_HOURS` (Default is 24).
+---
 
-### Database Changes
-- Added `Booking` collection with references to Event, TicketCategory, and User.
-- Indexes: `eventId`, `ticketCategoryId`, `attendeeId`, `referenceCode` (unique), `status`.
-- Status values: `confirmed`, `cancelled`, `checked_in`.
-- Refund fields: `refundStatus`, `refundAmount`.
+## Tech Stack
 
-### Important Business Rules
-- **Overselling Prevention**: Inventory is atomically decremented during booking using a MongoDB conditional update `$expr: { $lte: [{ $add: ['$sold', quantity] }, '$quota'] }`. If booking document creation fails, a compensating update restores inventory.
-- **Cancellation Window**: Bookings can only be cancelled up to `CANCELLATION_WINDOW_HOURS` before the event starts.
-- **Inventory Restoration**: Cancelling a booking restores its `quantity` to the `sold` counter on `TicketCategory`.
-- **Check-in Rules**: Only the `organizer` who owns the event (or an `admin`) can check in a booking. Attendees cannot.
-- **QR Reference**: A unique `referenceCode` is generated per booking and exposed along with its QR Code data URI.
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **ODM:** Mongoose
+- **Authentication:** JWT
+- **Password Security:** bcrypt
+- **Validation:** express-validator
+- **QR Generation:** qrcode
+- **Frontend:** HTML, CSS, JavaScript
+- **API Testing:** Postman
 
-### Member 3 Handoff Notes
-- **Booking History**: Query `Booking` by `attendeeId` and populate related fields to build the user's booking history.
-- **Waitlist**: The waitlist logic can trigger when booking creation fails with `TICKETS_SOLD_OUT`. Cancellation restores inventory, which waitlist can then consume.
-- **Sales Dashboard**: Aggregate `quantity` and `totalAmount` grouping by `eventId` or `ticketCategoryId` directly from the `Booking` collection.
-- **RBAC**: Do not create a new roles structure; reuse `req.user.role` from the JWT middleware.
+---
 
-### Member 4 Handoff Notes
-- Postman routes for Booking are provided below or in the exported Postman collection.
-- All edge-cases tested (insufficient inventory, double cancellation, double check-in, unauthorized views, bad references).
-- Database relationships cleanly separate Event, Category, Booking, and User documents.
+## Features
 
+The project implements the required event-management workflow:
+
+1. User Registration & Authentication
+2. Event Creation & Management
+3. Ticket Category Management
+4. Event Discovery & Search
+5. Ticket Booking
+6. Booking Confirmation & QR Reference
+7. Cancellation & Refund
+8. Booking Check-In
+9. Attendee Booking History
+10. Event Approval Workflow
+11. Waitlist Management
+12. Organizer Sales Dashboard
+13. Role-Based Access Control (RBAC)
+
+---
+
+## User Roles
+
+### Attendee
+- Register and log in
+- Browse approved events
+- View ticket categories
+- Book tickets
+- View booking history
+- Cancel eligible bookings
+- Join and view waitlists
+
+### Organizer
+- Create events
+- Update and delete owned events
+- Create and manage ticket categories
+- View sales and attendance information
+- Check in bookings belonging to owned events
+
+### Admin
+- Approve or reject pending events
+- Perform authorized check-in operations
+- Access organizer dashboards
+- Access authorized booking information
+
+---
+
+## Project Structure
+
+```text
+Event_Management_Ticket_Booking/
+│
+├── config/
+│   └── db.js
+│
+├── controllers/
+│   ├── authController.js
+│   ├── bookingController.js
+│   ├── categoryController.js
+│   ├── eventController.js
+│   ├── organizerController.js
+│   └── waitlistController.js
+│
+├── middleware/
+│   ├── auth.js
+│   ├── errorHandler.js
+│   └── validate.js
+│
+├── models/
+│   ├── User.js
+│   ├── Event.js
+│   ├── TicketCategory.js
+│   ├── Booking.js
+│   └── Waitlist.js
+│
+├── routes/
+│   ├── authRoutes.js
+│   ├── bookingRoutes.js
+│   ├── categoryRoutes.js
+│   ├── eventRoutes.js
+│   ├── organizerRoutes.js
+│   └── waitlistRoutes.js
+│
+├── frontend/
+│   ├── app.js
+│   ├── dashboard.html
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   └── style.css
+│
+├── .env.example
+├── package.json
+├── package-lock.json
+├── server.js
+└── README.md

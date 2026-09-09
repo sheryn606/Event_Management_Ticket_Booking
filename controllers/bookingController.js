@@ -311,6 +311,23 @@ exports.cancelBooking = async (req, res, next) => {
       { $inc: { sold: -booking.quantity } }
     );
 
+    // Simple Waitlist Promotion (without overengineering)
+    try {
+      const Waitlist = require('../models/Waitlist');
+      const nextInLine = await Waitlist.findOne({
+        eventId: booking.eventId,
+        ticketCategoryId: booking.ticketCategoryId,
+        status: 'waiting'
+      }).sort({ requestedAt: 1 });
+
+      if (nextInLine) {
+        nextInLine.status = 'promoted';
+        await nextInLine.save();
+      }
+    } catch (promoErr) {
+      console.error('Waitlist promotion error:', promoErr);
+    }
+
     res.status(200).json({
       success: true,
       message: 'Booking cancelled successfully and refund initiated',

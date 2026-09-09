@@ -6,12 +6,13 @@ const {
   deleteEvent,
   getEvent,
   searchEvents,
+  approveEvent,
 } = require('../controllers/eventController');
 const { protect, requireRole } = require('../middleware/auth');
 const { body } = require('express-validator');
 const validate = require('../middleware/validate');
 
-// Category routes will be mounted in server.js or handled here. 
+// Category routes will be mounted in server.js or handled here.
 // For cleaner organization, they are typically a separate file mounted on /api/events/:eventId/categories
 // We'll use a separate router and merge params for category.
 
@@ -36,8 +37,17 @@ router.get('/search', searchEvents);
 // Public get single event
 router.get('/:id', getEvent);
 
-// Protected routes (Organizer only)
+// Protected routes
 router.use(protect);
+
+// Admin-only event approval
+router.put(
+  '/:id/approve',
+  requireRole('admin'),
+  approveEvent
+);
+
+// Organizer-only event management
 router.use(requireRole('organizer'));
 
 router.post('/', eventValidation, validate, createEvent);

@@ -9,6 +9,8 @@ const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 const { eventCategoryRouter, categoryRouter } = require('./routes/categoryRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
+const waitlistRoutes = require('./routes/waitlistRoutes');
+const organizerRoutes = require('./routes/organizerRoutes');
 
 // Connect to database
 connectDB();
@@ -32,6 +34,12 @@ app.use('/api/categories', categoryRouter);
 
 // Mount booking router
 app.use('/api/bookings', bookingRoutes);
+
+// Mount waitlist router
+app.use('/api/waitlist', waitlistRoutes);
+
+// Mount organizer router
+app.use('/api/organizers', organizerRoutes);
 
 // Centralized Error Handler (must be after all routes)
 app.use(errorHandler);

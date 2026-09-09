@@ -5,7 +5,7 @@ const Event = require('../models/Event');
 // @access  Private (Organizer)
 const createEvent = async (req, res, next) => {
   try {
-    const { title, description, venue, date, city, category, status } = req.body;
+    const { title, description, venue, date, city, category } = req.body;
 
     const event = await Event.create({
       organizerId: req.user.id, // Derived from JWT, not body
@@ -15,7 +15,7 @@ const createEvent = async (req, res, next) => {
       date,
       city,
       category,
-      status: status || 'pending', // Default to pending if not provided
+      status: 'pending', // Default to pending if not provided
     });
 
     res.status(201).json({
@@ -52,9 +52,13 @@ const updateEvent = async (req, res, next) => {
       return next(error);
     }
 
+    // Prevent organizer from changing status
+    const updateData = { ...req.body };
+    delete updateData.status;
+
     const updatedEvent = await Event.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -174,11 +178,55 @@ const searchEvents = async (req, res, next) => {
     next(error);
   }
 };
+const approveEvent = async (req, res, next) => {
+  try {
+    const { status } = req.body;
 
+    if (!['approved', 'rejected'].includes(status)) {
+      const error = new Error('Status must be approved or rejected');
+      error.errorCode = 'VALIDATION_ERROR';
+      res.status(400);
+      return next(error);
+    }
+
+    const event = await Event.findById(req.params.id);
+
+    if (!event) {
+      const error = new Error('Event not found');
+      error.errorCode = 'NOT_FOUND';
+      res.status(404);
+      return next(error);
+    }
+
+    if (event.status !== 'pending') {
+      const error = new Error(
+        `Event is already ${event.status} and cannot be reviewed`
+      );
+      error.errorCode = 'INVALID_STATE';
+      res.status(409);
+      return next(error);
+    }
+
+    event.status = status;
+    await event.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Event ${status} successfully`,
+      data: {
+        _id: event._id,
+        status: event.status,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 module.exports = {
   createEvent,
   updateEvent,
   deleteEvent,
   getEvent,
   searchEvents,
+  approveEvent,
 };

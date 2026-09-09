@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+
 const {
   createBooking,
   getBooking,
@@ -7,7 +8,11 @@ const {
   cancelBooking,
   checkInBooking,
 } = require('../controllers/bookingController');
-const { protect } = require('../middleware/auth');
+
+const {
+  getBookingHistory,
+} = require('../controllers/bookingHistoryController');
+const { protect, requireRole } = require('../middleware/auth');
 const { body } = require('express-validator');
 const validate = require('../middleware/validate');
 
@@ -18,10 +23,10 @@ const createBookingValidation = [
 ];
 
 router.use(protect);
-
+router.get('/history', requireRole('attendee'), getBookingHistory);
+router.get('/reference/:referenceCode', getBookingByReference);
 router.post('/', createBookingValidation, validate, createBooking);
 router.get('/:id', getBooking);
-router.get('/reference/:referenceCode', getBookingByReference);
 router.put('/:id/cancel', cancelBooking);
 router.put('/:id/checkin', checkInBooking);
 

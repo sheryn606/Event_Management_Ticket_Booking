@@ -152,7 +152,7 @@
             try {
                 // Fetch all events for now since this is a simple demo
                 const data = await apiFetch('/events/search');
-                let events = data.events || data.data || data;
+                let events = data.data?.events || data.events || data;
                 
                 const list = document.getElementById('my-events-list');
                 list.innerHTML = '';

@@ -52,6 +52,7 @@ const createCategory = async (req, res, next) => {
 // @access  Public
 const getCategories = async (req, res, next) => {
   try {
+    console.log("HIT GET CATEGORIES", req.params);
     const { eventId } = req.params;
 
     const categories = await TicketCategory.find({ eventId });
@@ -62,6 +63,7 @@ const getCategories = async (req, res, next) => {
       data: categories,
     });
   } catch (error) {
+    console.log("ERROR IN GET CATEGORIES", error);
     next(error);
   }
 };

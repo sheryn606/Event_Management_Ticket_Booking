@@ -7,7 +7,7 @@ const errorHandler = require('./middleware/errorHandler');
 // Route files
 const authRoutes = require('./routes/authRoutes');
 const eventRoutes = require('./routes/eventRoutes');
-const { eventCategoryRouter, categoryRouter } = require('./routes/categoryRoutes');
+const { categoryRouter } = require('./routes/categoryRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const waitlistRoutes = require('./routes/waitlistRoutes');
 const organizerRoutes = require('./routes/organizerRoutes');
@@ -24,10 +24,6 @@ app.use(express.json());
 // Mount routers
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
-
-// Mount nested categories router
-// We use a separate router for /api/events/:eventId/categories
-app.use('/api/events/:eventId/categories', eventCategoryRouter);
 
 // Mount root categories router for PUT and DELETE
 app.use('/api/categories', categoryRouter);

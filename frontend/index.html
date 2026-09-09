@@ -25,7 +25,7 @@
     <div id="alert-container"></div>
 
     <div class="container mt-5 pt-3">
-        
+
         <div class="text-center mb-5 animate-fade-in">
             <h1 class="display-4 fw-bold mb-3 text-dark">Discover Amazing Events</h1>
             <p class="lead text-muted">Find and book the best experiences in your city.</p>
@@ -68,14 +68,14 @@
         async function loadEvents(params = '') {
             const list = document.getElementById('events-list');
             const loading = document.getElementById('events-loading');
-            
+
             list.innerHTML = '';
             loading.classList.remove('d-none');
-            
+
             try {
                 const data = await apiFetch(`/events/search${params}`);
-                const events = data.events || data.data || data; 
-                
+                const events = data.data?.events || data.events || data;
+
                 if (!Array.isArray(events) || events.length === 0) {
                     list.innerHTML = '<div class="col-12 text-center text-muted py-5 my-5"><h4 class="fw-bold">No events found.</h4><p>Try adjusting your search filters.</p></div>';
                 } else {
@@ -89,7 +89,7 @@
                                     <span class="badge bg-primary bg-opacity-10 text-primary mb-3 px-3 py-2 rounded-pill">${event.category || 'Event'}</span>
                                     <h4 class="card-title fw-bold mb-3">${event.title}</h4>
                                     <p class="card-text text-muted mb-4 line-clamp-3">${event.description || 'No description provided.'}</p>
-                                    
+
                                     <div class="d-flex align-items-center mb-2 text-dark fw-medium">
                                         <span class="me-2 fs-5">📍</span>
                                         <span>${event.venue}, ${event.city}</span>
@@ -120,12 +120,12 @@
             const city = document.getElementById('filter-city').value.trim();
             const category = document.getElementById('filter-category').value.trim();
             const date = document.getElementById('filter-date').value;
-            
+
             const params = new URLSearchParams();
             if (city) params.append('city', city);
             if (category) params.append('category', category);
             if (date) params.append('date', date);
-            
+
             const queryString = params.toString() ? `?${params.toString()}` : '';
             loadEvents(queryString);
         });
